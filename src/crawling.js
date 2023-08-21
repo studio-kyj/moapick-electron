@@ -1,5 +1,6 @@
 import { chromium } from "playwright";
 import dotenv from "dotenv";
+import uploadFileAndGetSingedUrl from "./lib/aws";
 
 dotenv.config();
 
@@ -80,7 +81,7 @@ async function getUserCardsId(page, postId) {
 }
 
 //지원자 이력서 다운로드 및 정보 가져오기
-async function testSaveUserResume(page, postId) {
+async function saveUserResume(page, postId) {
   const url = `https://www.wanted.co.kr/dashboard/recruitment/${postId}?application=is_exclude_reject`;
   await page.goto(url);
 
@@ -136,7 +137,8 @@ async function testSaveUserResume(page, postId) {
 
     const path = await download.suggestedFilename();
     const filePath = "./resume/" + path;
-    await download.saveAs(filePath);
+    await download.saveAs(path);
+    await uploadFileAndGetSingedUrl(path);
     userInfo["filePath"] = filePath;
   }
 
@@ -164,7 +166,7 @@ async function crawling(ID, PW) {
 
   let allUserInfo = [];
   for (let postId of ["162235"]) {
-    const userInfoByJobPosting = await testSaveUserResume(page, postId);
+    const userInfoByJobPosting = await saveUserResume(page, postId);
     allUserInfo.push(userInfoByJobPosting);
   }
   console.log(allUserInfo);
