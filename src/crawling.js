@@ -60,17 +60,22 @@ async function getJobPostings(page) {
 }
 
 /**지원자카드 Id 가져오기*/
-async function getUserCardsId(page) {
-  await page.waitForSelector(".bCKHtx");
-  const userCards = await page.$$(".bCKHtx");
+async function getUserCardsId(page, postId) {
+  const data = await page.evaluate(
+    (postId) => {
+      const baseUrl = location.href.substring(
+        0,
+        location.href.indexOf(".kr") + 3
+      );
 
-  let userCardsId = [];
-  for (let card of userCards) {
-    await page.waitForSelector(".bCKHtx");
-    console.log(await card.textContent());
-    const userId = await card.getAttribute("data-apply-id");
-    userCardsId.push(userId);
-  }
+      const newUrl = `${baseUrl}/api/dashboard/chaos/applications/v1?column_index=send&position_id=${postId}&is_reject=false`;
+      return fetch(newUrl)
+        .then((res) => res.json())
+        .then((data) => data.data);
+    },
+    [postId]
+  );
+  const userCardsId = data.map((user) => user.id);
   return userCardsId;
 }
 
@@ -80,7 +85,7 @@ async function testSaveUserResume(page, postId) {
   await page.goto(url);
 
   // Get user cards
-  const userCardsIds = await getUserCardsId(page);
+  const userCardsIds = await getUserCardsId(page, postId);
 
   let allUserInfo = [];
   for (let userCardId of userCardsIds) {
@@ -123,7 +128,6 @@ async function testSaveUserResume(page, postId) {
     userInfo["chk_time"] = data.data.chk_time;
 
     allUserInfo.push(userInfo);
-    console.log(allUserInfo);
 
     const [download] = await Promise.all([
       page.waitForEvent("download"), // wait for download to start
@@ -141,7 +145,7 @@ async function testSaveUserResume(page, postId) {
 
 async function crawling(ID, PW) {
   const browser = await chromium.launch({
-    headless: true,
+    headless: false,
   });
   const userAgent =
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36";
@@ -162,8 +166,8 @@ async function crawling(ID, PW) {
   for (let postId of ["162235"]) {
     const userInfoByJobPosting = await testSaveUserResume(page, postId);
     allUserInfo.push(userInfoByJobPosting);
-    console.log(allUserInfo);
   }
+  console.log(allUserInfo);
   await browser.close();
   return allUserInfo;
 }

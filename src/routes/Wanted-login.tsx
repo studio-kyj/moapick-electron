@@ -8,16 +8,6 @@ interface FormValue {
   password?: string;
 }
 
-// replyInputValue에 대한 응답 수신
-ipcRenderer.on("replyInputValue", (evt, payload) => {
-  console.log(payload);
-});
-
-// onWebcontentsValue에 대한 이벤트 수신
-ipcRenderer.on("onWebcontentsValue", (evt, payload) => {
-  console.log(payload);
-});
-
 const WantedLogin = () => {
   const navigate = useNavigate();
   const { control, handleSubmit } = useForm<FormValue>({
