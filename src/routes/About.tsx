@@ -5,7 +5,7 @@ const About = () => {
   return (
     <>
       <Link to="/">Home</Link>
-      <div>About</div>
+      <div className="bg-sky-300">About</div>
     </>
   );
 };
