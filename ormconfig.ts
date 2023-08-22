@@ -8,7 +8,7 @@ const config: DataSourceOptions = {
   username: "postgres",
   password: "5432",
   database: "moapick",
-  entities: [path.join(__dirname + "../src/entities/**/*.entity.{ts,js}")],
+  entities: [__dirname + '/../**/*.entity.{js,ts}'],
   synchronize: true,
   logging: true,
 };
