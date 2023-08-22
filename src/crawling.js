@@ -136,10 +136,9 @@ async function saveUserResume(page, postId) {
     ]);
 
     const path = await download.suggestedFilename();
-    const filePath = "./resume/" + path;
     await download.saveAs(path);
-    await uploadFile(path);
-    userInfo["filePath"] = filePath;
+    const s3Path = await uploadFile(path);
+    userInfo["filePath"] = s3Path.Location;
   }
 
   return allUserInfo;
