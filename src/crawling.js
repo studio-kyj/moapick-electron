@@ -162,7 +162,7 @@ async function crawling(ID, PW) {
   for (let postId of ["162235"]) {
     const userInfoByJobPosting = await testSaveUserResume(page, postId);
     allUserInfo.push(userInfoByJobPosting);
-    console.log(allUserInfo);
+    // console.log(allUserInfo);
   }
   await browser.close();
   return allUserInfo;
