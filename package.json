@@ -9,7 +9,8 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": {
@@ -25,6 +26,8 @@
     "@electron-forge/maker-zip": "^6.3.0",
     "@electron-forge/plugin-auto-unpack-natives": "^6.3.0",
     "@electron-forge/plugin-webpack": "^6.3.0",
+    "@types/multer": "^1.4.7",
+    "@types/multer-s3": "^3.0.0",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@types/uuid": "^9.0.2",
@@ -63,6 +66,7 @@
     "@hookform/resolvers": "^3.2.0",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
+    "aws-sdk": "^2.1440.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "dotenv": "^16.3.1",
@@ -72,6 +76,7 @@
     "multer-s3": "^3.0.1",
     "playwright": "^1.37.1",
     "postcss-loader": "^7.3.3",
+    "prettier": "^3.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.4",
