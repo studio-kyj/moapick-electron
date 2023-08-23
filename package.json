@@ -11,6 +11,8 @@
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "typeorm": "typeorm"
+
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": {
@@ -26,6 +28,8 @@
     "@electron-forge/maker-zip": "^6.3.0",
     "@electron-forge/plugin-auto-unpack-natives": "^6.3.0",
     "@electron-forge/plugin-webpack": "^6.3.0",
+    "@types/multer": "^1.4.7",
+    "@types/multer-s3": "^3.0.0",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@types/uuid": "^9.0.2",
@@ -61,6 +65,13 @@
     "@types/pg": "^8.10.2",
     "ajv": "^8.12.0",
     "argon2": "^0.31.0",
+
+    "@hookform/resolvers": "^3.2.0",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@types/nedb": "^1.8.13",
+    "ajv": "^8.12.0",
+    "aws-sdk": "^2.1440.0",
     "axios": "^1.4.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
@@ -75,6 +86,8 @@
     "postcss-loader": "^7.3.3",
     "postgresql": "^0.0.1",
     "postgresql-client": "^2.7.1",
+
+    "prettier": "^3.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.4",

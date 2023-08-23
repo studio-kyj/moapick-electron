@@ -15,15 +15,9 @@
     "emitDecoratorMetadata": true,
     "jsx": "react-jsx",
     "paths": {
-      "*": [
-        "node_modules/*",
-      ],
-      "@/*": [
-        "src/*"
-      ]
+      "*": ["node_modules/*"],
+      "@/*": ["src/*"]
     }
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

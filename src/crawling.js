@@ -1,5 +1,6 @@
 import { chromium } from "playwright";
 import dotenv from "dotenv";
+import uploadFile from "./lib/aws";
 
 dotenv.config();
 
@@ -12,7 +13,7 @@ const buttonSelector = {
 //로그인
 async function login(page, ID, PW) {
   await page.goto(
-    "https://id.wanted.jobs/login?before_url=https%3A%2F%2Fwww.wanted.co.kr%2Fdashboard%2Fuser%2Fcheck&redirect_url=https%3A%2F%2Fwww.wanted.co.kr%2Fapi%2Fchaos%2Fauths%2Fv1%2Fcallback%2Fset-token&client_id=3cxYxwiZG2Hys8DvQjwJzxMm&service=dashboard&amp_device_id=undefined"
+    "https://id.wanted.jobs/login?before_url=https%3A%2F%2Fwww.wanted.co.kr%2Fdashboard%2Fuser%2Fcheck&redirect_url=https%3A%2F%2Fwww.wanted.co.kr%2Fapi%2Fchaos%2Fauths%2Fv1%2Fcallback%2Fset-token&client_id=3cxYxwiZG2Hys8DvQjwJzxMm&service=dashboard&amp_device_id=undefined",
   );
 
   await (await page.waitForSelector(buttonSelector.emailInput)).type(ID);
@@ -28,7 +29,7 @@ async function login(page, ID, PW) {
 //채용중인 공고페이지로 이동
 async function navigateJobPostings(page) {
   await page.goto(
-    "https://www.wanted.co.kr/dashboard/recruitment?order=id&status=active"
+    "https://www.wanted.co.kr/dashboard/recruitment?order=id&status=active",
   );
 }
 
@@ -36,21 +37,21 @@ async function navigateJobPostings(page) {
 async function getJobPostings(page) {
   console.log("채용공고 가져오는 중");
   await page.waitForSelector(
-    "td.styled__TableData-sc-10oxjpl-3.kiCEfJ a[data-attribute-id='biz__recruitmentList__position__click']"
+    "td.styled__TableData-sc-10oxjpl-3.kiCEfJ a[data-attribute-id='biz__recruitmentList__position__click']",
   );
   const elements = await page.$$(
-    "td.styled__TableData-sc-10oxjpl-3.kiCEfJ a[data-attribute-id='biz__recruitmentList__position__click']"
+    "td.styled__TableData-sc-10oxjpl-3.kiCEfJ a[data-attribute-id='biz__recruitmentList__position__click']",
   );
 
   let applyPostId = [];
   for (let element of elements) {
     const text = await element.$eval(
       "span.gtNgFZ span",
-      (node) => node.innerText
+      (node) => node.innerText,
     );
     if (parseInt(text, 10) > 0) {
       const href = await element.evaluate((node) =>
-        node.getAttribute("data-position-id")
+        node.getAttribute("data-position-id"),
       );
       applyPostId.push(href);
     }
@@ -65,7 +66,7 @@ async function getUserCardsId(page, postId) {
     (postId) => {
       const baseUrl = location.href.substring(
         0,
-        location.href.indexOf(".kr") + 3
+        location.href.indexOf(".kr") + 3,
       );
 
       const newUrl = `${baseUrl}/api/dashboard/chaos/applications/v1?column_index=send&position_id=${postId}&is_reject=false`;
@@ -73,14 +74,14 @@ async function getUserCardsId(page, postId) {
         .then((res) => res.json())
         .then((data) => data.data);
     },
-    [postId]
+    [postId],
   );
   const userCardsId = data.map((user) => user.id);
   return userCardsId;
 }
 
 //지원자 이력서 다운로드 및 정보 가져오기
-async function testSaveUserResume(page, postId) {
+async function saveUserResume(page, postId) {
   const url = `https://www.wanted.co.kr/dashboard/recruitment/${postId}?application=is_exclude_reject`;
   await page.goto(url);
 
@@ -97,7 +98,7 @@ async function testSaveUserResume(page, postId) {
     const data = await page.evaluate(async (userCardId) => {
       const baseUrl = location.href.substring(
         0,
-        location.href.indexOf(".kr") + 3
+        location.href.indexOf(".kr") + 3,
       );
 
       const newUrl = `${baseUrl}/api/dashboard/chaos/applications/v1/${userCardId}`;
@@ -110,7 +111,7 @@ async function testSaveUserResume(page, postId) {
     const resume = await page.evaluate(async (userCardId) => {
       const baseUrl = location.href.substring(
         0,
-        location.href.indexOf(".kr") + 3
+        location.href.indexOf(".kr") + 3,
       );
 
       const newUrl = `${baseUrl}/api/dashboard/chaos/resumes/v1/apply/${userCardId}`;
@@ -135,9 +136,9 @@ async function testSaveUserResume(page, postId) {
     ]);
 
     const path = await download.suggestedFilename();
-    const filePath = "./resume/" + path;
-    await download.saveAs(filePath);
-    userInfo["filePath"] = filePath;
+    await download.saveAs(path);
+    const s3Path = await uploadFile(path);
+    userInfo["filePath"] = s3Path.Location;
   }
 
   return allUserInfo;
@@ -163,8 +164,10 @@ async function crawling(ID, PW) {
   const applyPostIds = await getJobPostings(page);
 
   let allUserInfo = [];
+  
   for (let postId of ["176159"]) {
     const userInfoByJobPosting = await testSaveUserResume(page, postId);
+
     allUserInfo.push(userInfoByJobPosting);
     // console.log(allUserInfo);
   }
