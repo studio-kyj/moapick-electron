@@ -163,7 +163,7 @@ async function crawling(ID, PW) {
   const applyPostIds = await getJobPostings(page);
 
   let allUserInfo = [];
-  for (let postId of ["162235"]) {
+  for (let postId of ["176159"]) {
     const userInfoByJobPosting = await testSaveUserResume(page, postId);
     allUserInfo.push(userInfoByJobPosting);
     // console.log(allUserInfo);
